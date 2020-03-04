@@ -6,6 +6,7 @@
 BUILD=static/build
 ACCESS_LOG_FORMAT='%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s"'
 GITHUB_EDITOR_WIDTH=127
+FLAKE_EXCLUDE=./.*,scripts/20*,vendor/*,node_modules/*
 
 define lessc
 	echo Compressing $(1).less; \
@@ -54,14 +55,20 @@ reindex-solr:
 	su postgres -c "psql openlibrary -t -c 'select key from thing' | sed 's/ *//' | grep '^/books/' | PYTHONPATH=$(PWD) xargs python openlibrary/solr/update_work.py -s http://0.0.0.0/ -c conf/openlibrary.yml --data-provider=legacy"
 	su postgres -c "psql openlibrary -t -c 'select key from thing' | sed 's/ *//' | grep '^/authors/' | PYTHONPATH=$(PWD) xargs python openlibrary/solr/update_work.py -s http://0.0.0.0/ -c conf/openlibrary.yml --data-provider=legacy"
 
+lint-diff:
+	# https://flake8.readthedocs.io/en/latest/user/error-codes.html
+	# https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
+	# E226 missing whitespace around arithmetic operator
+	# F401 '._init_path' imported but unused
+	# W504 line break after binary operator
+	git diff master -U0 | flake8 --diff --ignore=E226,F401,W504 --max-line-length=88 --statistics
+
 lint:
 	# stop the build if there are Python syntax errors or undefined names
-	$(PYTHON) -m flake8 . --count --exclude=./.*,scripts/20*,vendor/*  --select=E9,F63,F7,F822,F823 --show-source --statistics
-	# TODO: Add --select=F821 below into the line above as soon as the Undefined Name issues have been fixed
-	$(PYTHON) -m flake8 . --exit-zero --count --exclude=./.*,scripts/20*,vendor/*  --select=F821 --show-source --statistics
+	$(PYTHON) -m flake8 . --count --exclude=$(FLAKE_EXCLUDE) --select=E9,F63,F7,F82 --show-source --statistics
 ifndef CONTINUOUS_INTEGRATION
 	# exit-zero treats all errors as warnings, only run this in local dev while fixing issue, not CI as it will never fail.
-	$(PYTHON) -m flake8 . --count --exclude=./.*,scripts/20*,vendor*,node_modules/* --exit-zero --max-complexity=10 --max-line-length=$(GITHUB_EDITOR_WIDTH) --statistics
+	$(PYTHON) -m flake8 . --count --exclude=$(FLAKE_EXCLUDE) --exit-zero --max-complexity=10 --max-line-length=$(GITHUB_EDITOR_WIDTH) --statistics
 endif
 
 test:

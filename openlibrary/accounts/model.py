@@ -12,7 +12,7 @@ import uuid
 import logging
 import requests
 
-import lepl.apps.rfc3696
+from validate_email import validate_email
 import web
 
 from infogami import config
@@ -29,7 +29,7 @@ def append_random_suffix(text, limit=9999):
     return '%s%s' % (text, random.randint(0, limit))
 
 def valid_email(email):
-    return lepl.apps.rfc3696.Email()(email)
+    return validate_email(email)
 
 def sendmail(to, msg, cc=None):
     cc = cc or []
@@ -54,7 +54,7 @@ def verify_hash(secret_key, text, hash):
 
 def generate_hash(secret_key, text, salt=None):
     salt = salt or hmac.HMAC(secret_key, str(random.random())).hexdigest()[:5]
-    hash = hmac.HMAC(secret_key, salt + web.utf8(text)).hexdigest()
+    hash = hmac.HMAC(secret_key, salt + web.safestr(text)).hexdigest()
     return '%s$%s' % (salt, hash)
 
 def get_secret_key():

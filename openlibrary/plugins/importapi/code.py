@@ -2,6 +2,7 @@
 """
 
 from infogami.plugins.api.code import add_hook
+from infogami.infobase.client import ClientException
 
 from openlibrary.plugins.openlibrary.code import can_write
 from openlibrary.catalog.marc.marc_binary import MarcBinary, MarcException
@@ -18,9 +19,8 @@ import base64
 import json
 import re
 
-import import_opds
-import import_rdf
-import import_edition_builder
+from openlibrary.plugins.importapi import (import_edition_builder, import_opds,
+                                           import_rdf)
 from lxml import etree
 import logging
 
@@ -125,6 +125,8 @@ class importapi:
             return json.dumps(reply)
         except add_book.RequiredField as e:
             return self.error('missing-required-field', str(e))
+        except ClientException as e:
+            return self.error('bad-request', **json.loads(e.json))
 
     def reject_non_book_marc(self, marc_record, **kwargs):
         details = 'Item rejected'
@@ -405,6 +407,7 @@ class ils_search:
         # step 4: format the result
         d = self.format_result(matches, auth_header, keys)
         return json.dumps(d)
+
 
     def error(self, reason):
         d = json.dumps({ "status" : "error", "reason" : reason})

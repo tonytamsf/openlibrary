@@ -7,7 +7,7 @@ from collections import defaultdict
 import cgi
 import web
 import simplejson
-from facet_hash import facet_token
+from openlibrary.plugins.search.facet_hash import facet_token
 import pdb
 
 import six
@@ -76,7 +76,7 @@ class SimpleQueryProcessor:
          (title:world^100 OR authors:world^15 OR subjects:world^10 OR language:world^10 OR text:world^1 OR fulltext:world^1)'
     """
     def process(self, query):
-        query = web.utf8(query)
+        query = web.safestr(query)
         tokens = query.split(' ')
         return " ".join(self.process_token(t) for t in tokens)
 
@@ -200,16 +200,6 @@ class Solr_client(object):
                     if facet_token(k,v) == token:
                         return (k,v)
         return None
-
-    def isearch(self, query, loc=0):
-        # iterator interface to search
-        while True:
-            s = search(self, query, start=loc)
-            if len(s) == 0: return
-            loc += len(s)
-            for y in s:
-                if not y.startswith('OCA/'):
-                    yield y
 
     def search(self, query, **params):
         # advanced search: directly post a Solr search which uses fieldnames etc.
