@@ -103,17 +103,13 @@ def find_image_path(filename):
 def read_file(path):
     if ':' in path:
         path, offset, size = path.rsplit(':', 2)
-        offset = int(offset)
-        size = int(size)
-        f = open(path)
-        f.seek(offset)
-        data = f.read(size)
-        f.close()
+        with open(path, 'rb') as f:
+            f.seek(int(offset))
+            return f.read(int(size))
     else:
-        f = open(path)
-        data = f.read()
-        f.close()
-    return data
+        with open(path, 'rb') as f:
+            return f.read()
+
 
 def read_image(d, size):
     if size:
