@@ -18,6 +18,9 @@ jobs:
         - if [ "$TRAVIS_EVENT_TYPE" == "pull_request" ]; then
             git diff origin/master -U0 | flake8 --diff --max-line-length=88;
           fi
+        - pytest openlibrary/catalog    || true
+        - pytest openlibrary/coverstore || true
+        - pytest openlibrary/plugins    || true
     - name: “Python 3.8 on bionic”
       python: "3.8"
   allow_failures:
