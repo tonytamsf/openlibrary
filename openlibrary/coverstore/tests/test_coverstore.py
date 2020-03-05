@@ -66,7 +66,7 @@ def test_resize_image_aspect_ratio():
 def test_serve_file(image_dir):
     path = static_dir + "/logos/logo-en.png"
 
-    assert coverlib.read_file('/dev/null') == ''
+    assert coverlib.read_file('/dev/null') == b''
     assert coverlib.read_file(path) == open(path).read()
 
     assert coverlib.read_file(path + ":10:20") == open(path).read()[10:10+20]
