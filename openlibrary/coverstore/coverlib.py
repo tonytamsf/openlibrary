@@ -3,12 +3,12 @@ from __future__ import print_function
 
 import datetime
 import os
+from io import BytesIO
 
 try:
     from PIL import Image
 except ImportError:
     import Image
-from six import StringIO
 import web
 
 from openlibrary.coverstore import config, db
@@ -61,11 +61,10 @@ def write_image(data, prefix):
         os.makedirs(dirname)
     try:
         # save original image
-        f = open(path_prefix + '.jpg', 'w')
-        f.write(data)
-        f.close()
+        with open(path_prefix + '.jpg', 'wb') as f:
+            f.write(data)
 
-        img = Image.open(StringIO(data))
+        img = Image.open(BytesIO(data))
         if img.mode != 'RGB':
             img = img.convert('RGB')
 
