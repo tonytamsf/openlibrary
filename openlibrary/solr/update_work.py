@@ -113,7 +113,7 @@ def add_field(doc, name, value):
     Example:
 
     >>> tostring(add_field(Element("doc"), "foo", "bar"))
-    "<doc><field name="foo">bar</field></doc>"
+    b"<doc><field name="foo">bar</field></doc>"
 
     :param lxml.etree.ElementBase doc: Parent document to append to.
     :param str name:
@@ -134,7 +134,7 @@ def add_field_list(doc, name, field_list):
     Example:
 
     >>> tostring(add_field_list(Element("doc"), "foo", [1,2]))
-    "<doc><field name="foo">1</field><field name="foo">2</field></doc>"
+    b"<doc><field name="foo">1</field><field name="foo">2</field></doc>"
 
     :param lxml.etree.ElementBase doc: Parent document to append to.
     :param str name:
@@ -978,7 +978,7 @@ class UpdateRequest:
         node = dict2element(self.doc)
         root = Element("add")
         root.append(node)
-        return tostring(root).encode('utf-8')
+        return tostring(root).decode('utf-8')
 
     def tojson(self):
         """
@@ -1184,7 +1184,7 @@ def make_delete_query(keys):
     for key in keys:
         query = SubElement(delete_query,'query')
         query.text = 'key:%s' % key
-    return tostring(delete_query)
+    return tostring(delete_query).decode('utf-8')
 
 def update_author(akey, a=None, handle_redirects=True):
     """
