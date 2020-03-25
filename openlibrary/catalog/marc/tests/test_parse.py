@@ -54,13 +54,15 @@ class TestParseMARCXML:
         assert edition_marc_xml
         j = simplejson.load(open(expect_filename))
         assert j, 'Unable to open test data: %s' % expect_filename
-        assert sorted(edition_marc_xml) == sorted(j), ('Processed MARCXML fields do '
-                                                       'not match expectations in %s'
-                                                       % expect_filename)
+        assert sorted(edition_marc_xml) == sorted(j), (
+            'Processed MARCXML fields do not match expectations in %s' %
+            expect_filename
+        )
         for k in edition_marc_xml:
-            assert edition_marc_xml[k] == j[k], ('Processed MARCXML values do not '
-                                                 'match expectations in %s'
-                                                 % expect_filename)
+            assert list(edition_marc_xml[k]) == j[k], (
+                'Processed MARCXML values do not match expectations in %s' %
+                expect_filename
+            )
         assert edition_marc_xml == j
 
 
@@ -90,7 +92,10 @@ class TestParseMARCBinary:
             if isinstance(j[k], list):
                 for item1, item2 in zip(edition_marc_bin[k], j[k]):
                     assert item1 == item2
-            assert edition_marc_bin[k] == j[k], 'Processed binary MARC values do not match expectations in %s' % expect_filename
+            assert list(edition_marc_bin[k]) == j[k], (
+                'Processed binary MARC values do not match expectations in %s' %
+                expect_filename
+            )
         assert edition_marc_bin == j
 
     def test_raises_see_also(self):
