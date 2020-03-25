@@ -20,8 +20,6 @@ class WARCReader:
     >>> f = BytesIO()
     >>> r1 = WARCRecord("resource", "subject_uri", "image/jpeg", {"hello": "world"}, "foo")
     >>> r2 = WARCRecord("resource", "subject_uri", "image/jpeg", {"hello": "world"}, "bar")
-    >>> str(r2)  # doctest: +ELLIPSIS
-    'WARC/0.10 3 resource subject_uri ... image/jpeg\nhello: world\n\nbar'
     >>> w = WARCWriter(f)
     >>> _ = w.write(r1)
     >>> _ = w.write(r2)
