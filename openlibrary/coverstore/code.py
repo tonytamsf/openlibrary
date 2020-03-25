@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 import web
 import simplejson
 import os
@@ -13,8 +13,6 @@ from six.moves.urllib.request import urlopen
 from openlibrary.coverstore import config, db, ratelimit
 from openlibrary.coverstore.coverlib import save_image, read_image, read_file
 from openlibrary.coverstore.utils import safeint, rm_f, random_string, ol_things, ol_get, changequery, download
-
-from six.moves import urllib
 
 
 logger = logging.getLogger("coverstore")
