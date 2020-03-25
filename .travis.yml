@@ -33,4 +33,5 @@ install:
 before_script: npm install
 script:
   - make i18n
+  - python openlibrary/coverstore/warc.py
   - make test
