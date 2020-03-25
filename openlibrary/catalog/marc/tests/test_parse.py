@@ -58,8 +58,8 @@ class TestParseMARCXML:
             'Processed MARCXML fields do not match expectations in %s' %
             expect_filename
         )
-        for k in edition_marc_xml:
-            assert list(edition_marc_xml[k]) == j[k], (
+        for k, item in enumerate(edition_marc_xml):
+            assert list(item) if isinstance(item, dict) else item == j[k], (
                 'Processed MARCXML values do not match expectations in %s' %
                 expect_filename
             )
