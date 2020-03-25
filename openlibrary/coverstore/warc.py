@@ -4,11 +4,9 @@ Reader and writer for WARC file format version 0.10.
 http://archive-access.sourceforge.net/warc/warc_file_format-0.10.html
 """
 
+import urllib
+import httplib
 import datetime
-
-from six import ensure_text
-from six.moves.http_client import HTTPConnection
-from six.moves.urllib.parse import urlparse
 
 WARC_VERSION = "0.10"
 CRLF = "\r\n"
@@ -16,14 +14,14 @@ CRLF = "\r\n"
 class WARCReader:
     """Reader to read records from a warc file.
 
-    >>> from io import BytesIO
-    >>> f = BytesIO()
+    >>> from six import StringIO
+    >>> f = StringIO()
     >>> r1 = WARCRecord("resource", "subject_uri", "image/jpeg", {"hello": "world"}, "foo")
     >>> r2 = WARCRecord("resource", "subject_uri", "image/jpeg", {"hello": "world"}, "bar")
     >>> w = WARCWriter(f)
     >>> _ = w.write(r1)
     >>> _ = w.write(r2)
-    >>> _ = f.seek(0)
+    >>> f.seek(0)
     >>> reader = WARCReader(f)
     >>> records = list(reader.read())
     >>> records == [r1, r2]
@@ -50,7 +48,7 @@ class WARCReader:
         """Reads the header of a record from the WARC file."""
         def consume_crlf():
             line = self._file.readline()
-            assert line == CRLF.encode('utf-8')
+            assert line == CRLF
 
         line = self._file.readline()
         if not line:
@@ -63,7 +61,7 @@ class WARCReader:
             creation_date, record_id, content_type, {})
 
         while True:
-            line = self._file.readline().decode('utf-8')
+            line = self._file.readline()
             if line == CRLF:
                 break
             k, v = line.strip().split(':', 1)
@@ -113,7 +111,7 @@ class HTTPFile:
 
     def read(self, size):
         protocol, host, port, path = self.urlsplit(self.url)
-        conn = HTTPConnection(host, port)
+        conn = httplib.HTTPConnection(host, port)
         headers = {'Range': 'bytes=%d-%d' % (self.offset, self.offset + size - 1)}
         conn.request('GET', path, None, headers)
         response = conn.getresponse()
@@ -125,16 +123,13 @@ class HTTPFile:
         """Splits url into protocol, host, port and path.
 
             >>> f = HTTPFile('')
-            >>> f.urlsplit("http://www.google.com")
-            ('http', 'www.google.com', None, '')
             >>> f.urlsplit("http://www.google.com/search?q=hello")
             ('http', 'www.google.com', None, '/search?q=hello')
-            >>> f.urlsplit("http://www.google.com:80/search?q=hello")
-            ('http', 'www.google.com', 80, '/search?q=hello')
         """
-        p = urlparse(url)
-        fullpath = "?".join((p.path, p.query)) if (p.path or p.query) else ""
-        return p.scheme, p.hostname, p.port, fullpath
+        protocol, rest = urllib.splittype(url)
+        hostport, path = urllib.splithost(rest)
+        host, port = urllib.splitport(hostport)
+        return protocol, host, port, path
 
 class WARCHeader:
     r"""WARCHeader class represents the header in the WARC file format.
@@ -285,10 +280,10 @@ class WARCWriter:
         """Writes a record into the WARC file.
         Assumes that data_length and other attributes are correctly set in record.header.
         """
-        self.file.write(str(record.get_header()).encode('utf-8'))
+        self.file.write(str(record.get_header()))
         offset = self.file.tell()
-        self.file.write(record.get_data().encode('utf-8'))
-        self.file.write(CRLF.encode('utf-8') + CRLF.encode('utf-8'))
+        self.file.write(record.get_data())
+        self.file.write(CRLF + CRLF)
         self.file.flush()
         return offset
 
