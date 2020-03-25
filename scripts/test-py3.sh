@@ -1,5 +1,9 @@
 #!/bin/sh
 
+pytest --doctest-modules openlibrary/coverstore/warc.py
+
+pytest --doctest-modules openlibrary/coverstore
+
 pytest openlibrary/mocks openlibrary/olbase openlibrary/tests openlibrary/utils scripts/tests \
     openlibrary/catalog/add_book/tests/test_add_book.py \
     openlibrary/catalog/add_book/tests/test_load_book.py \
@@ -31,10 +35,6 @@ pytest openlibrary/mocks openlibrary/olbase openlibrary/tests openlibrary/utils 
     openlibrary/plugins/worksearch/tests/test_worksearch.py
 
 # The following sections allow us to quickly spot tests that are fixed
-
-pytest --doctest-modules openlibrary/coverstore/warc.py
-
-pytest --doctest-modules openlibrary/coverstore
 
 # catalog: All failing tests run in allow failures (|| true) mode
 pytest \
