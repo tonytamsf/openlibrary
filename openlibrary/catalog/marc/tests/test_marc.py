@@ -123,8 +123,8 @@ class TestMarcParse(unittest.TestCase):
             output = subjects_for_work(MockRecord('650', value))
             if isinstance(expect, dict):
                 expect = list(expect)
-            if isinstance(output, dict):
-                output = list(output)
+            #if isinstance(output, dict):
+            #    output = list(output)
             self.assertEqual(list(expect), output)
 
     def test_read_title(self):
