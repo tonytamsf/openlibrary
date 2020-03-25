@@ -327,7 +327,7 @@ class SolrProcessor:
                         v = v.strip()
                         if v not in identifiers[k]:
                             identifiers[k].append(v)
-        return sorted(editions, key=lambda e: e.get('pub_year', None))
+        return sorted(editions, key=lambda e: int(e.get('pub_year') or -sys.maxsize))
 
     def get_author(self, a):
         """
@@ -978,7 +978,7 @@ class UpdateRequest:
         node = dict2element(self.doc)
         root = Element("add")
         root.append(node)
-        return tostring(root).encode('utf-8')
+        return tostring(root, encoding="unicode")
 
     def tojson(self):
         """
@@ -1184,7 +1184,7 @@ def make_delete_query(keys):
     for key in keys:
         query = SubElement(delete_query,'query')
         query.text = 'key:%s' % key
-    return tostring(delete_query)
+    return tostring(delete_query, encoding="unicode")
 
 def update_author(akey, a=None, handle_redirects=True):
     """
