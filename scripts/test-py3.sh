@@ -1,5 +1,7 @@
 #!/bin/sh
 
+python openlibrary/coverstore/warc.py
+
 pytest --doctest-modules openlibrary/coverstore/warc.py
 
 pytest --doctest-modules openlibrary/coverstore
