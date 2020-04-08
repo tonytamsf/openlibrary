@@ -33,7 +33,8 @@ pytest openlibrary/mocks openlibrary/olbase openlibrary/utils scripts/tests open
 # The following sections allow us to quickly spot tests that are fixed
 
 # catalog: All failing tests run in allow failures (|| true) mode
-pytest openlibrary/catalog/marc/tests/test_get_subjects.py \
+pytest \
+    openlibrary/catalog/marc/tests/test_get_subjects.py \
     openlibrary/catalog/marc/tests/test_marc.py \
     openlibrary/catalog/marc/tests/test_parse.py \
     openlibrary/tests/catalog/test_get_ia.py \
