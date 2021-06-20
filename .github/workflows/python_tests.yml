@@ -40,6 +40,4 @@ jobs:
           make lint
           make test-py
           source scripts/run_doctests.sh
-          touch .mypy_cache
-          yes mypy --install-types
           mypy .
