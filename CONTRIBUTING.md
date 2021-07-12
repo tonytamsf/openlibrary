@@ -134,4 +134,4 @@ The assignee of a PR is responsible for:
 - **testing the PR** before merging. Comment about how you tested in the PR. If _any_ changes are made to the PR code, you will have to test it again before merging.
 - **merging (or closing)** the PR.
 
-We strive for every PR to have an assignee so that nothing gets stuck.
+We strive for every PR to have an assignee so that nothing gets stuck
